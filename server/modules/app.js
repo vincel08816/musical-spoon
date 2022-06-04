@@ -40,7 +40,7 @@ const path = require("path");
 
 [
   ["/users", require("../routes/user")],
-  // ["/users", require("../routes/users")]
+  ["/auth", require("../routes/auth")],
 ].forEach(([name, router]) => app.use(name, router));
 
 require("./passport-config")(passport);

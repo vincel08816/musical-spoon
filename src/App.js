@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
+import BaseView from "./appComponents/BaseView";
+import { UserProvider } from "./contexts/userContext";
+import Home from "./Pages/Home/";
+import * as User from "./Pages/User";
 
-function App() {
+const theme = createTheme({});
+
+const NotFound = () => <div>404 Not Found</div>;
+
+const Wrapper = ({ children }) => (
+  <ThemeProvider theme={theme}>
+    <UserProvider>
+      <BrowserRouter>
+        <BaseView>
+          <Routes>{children}</Routes>
+        </BaseView>
+      </BrowserRouter>
+    </UserProvider>
+  </ThemeProvider>
+);
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+      <Route path="/" exact element={<Home />} />
+      <Route path="/login" exact element={<User.Login />} />
+      <Route path="/signup" exact element={<User.SignUp />} />
+      <Route path="*" element={<NotFound />} />
+    </Wrapper>
   );
 }
-
-export default App;
