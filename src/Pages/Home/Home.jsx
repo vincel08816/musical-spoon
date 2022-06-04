@@ -1,8 +1,12 @@
-import React from "react";
-// import { Contents, Hero } from "./components";
+import { Button } from "@mui/material";
+import React, { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import styled from "styled-components";
+import { UserContext } from "../../contexts/userContext";
 
 export default function Home() {
   // what the heck, why won't you work?
+  const { isLoggedIn } = useContext(UserContext);
 
   return (
     <div
@@ -18,6 +22,19 @@ export default function Home() {
         style={{ padding: "50px" }}
       />
       Random Stuff to put in here
+      <div style={{ padding: "20px" }} />
+      <Button variant="contained" sx={{ fontSize: "16px" }}>
+        {isLoggedIn ? (
+          <Link to="/">Open React Chat App</Link>
+        ) : (
+          <Link to="/login">Log into React Chat App</Link>
+        )}
+      </Button>
     </div>
   );
 }
+
+const Link = styled(NavLink)`
+  color: white;
+  text-decoration: none;
+`;
