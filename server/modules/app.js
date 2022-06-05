@@ -23,8 +23,8 @@ const path = require("path");
 [
   passport.initialize(),
   cp(),
-  // express.json({ limit: "50mb" }),
-  // express.urlencoded({ extended: true, limit: "50mb" }),
+  express.json({ limit: "50mb" }),
+  express.urlencoded({ extended: true, limit: "50mb" }),
   (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", true);

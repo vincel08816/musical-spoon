@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
-const { User } = require("../models/User");
+const User = require("../models/User");
 
 const secret = process.env.SECRET;
 
@@ -14,19 +14,15 @@ const secret = process.env.SECRET;
 router.get(
   "/",
   passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const user = await User.findById(req.user.id).select("-password");
-      res.json(user);
-    } catch (err) {
-      console.error(err.message);
-      res.sendStatus(500);
-    }
-  }
+  async (req, res) =>
+    await User.findById(req.user.id)
+      .select("-password")
+      .then((user) => res.json(user))
+      .catch((err) => console.error(err) && res.sendStatus(500))
 );
 
 // @route    POST /auth/login
-// @desc     Login∫
+// @desc     Login
 // @access   Public
 
 router.post(
@@ -37,20 +33,18 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.sendStatus(400);
 
-    const { email, password } = req.body;
     try {
-      const user = await User.findOne({ email });
-      if (!user) return res.sendStatus(401);
+      const { password } = req.body;
+      const email = req.body.email.toLowerCase().replace(" ", "");
+      const user = await User.findOne({ lowercaseEmail: email });
+      if (!user || !(await bcrypt.compare(password, user.password)))
+        return res.sendStatus(401);
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.sendStatus(401);
-
-      const payload = { user: { id: user.id } };
-      jwt.sign(payload, secret, { expiresIn: 3600 }, (err, token) => {
+      const payload = { id: user.id, email };
+      jwt.sign(payload, secret, { expiresIn: 36000 }, (err, token) => {
         if (err) throw err;
         res.cookie("token", token, { httpOnly: true });
-        // {!} maybe return user data here later
-        res.json({ _id: user._id, email: user.email });
+        res.json(payload);
       });
     } catch (error) {
       console.error(error);

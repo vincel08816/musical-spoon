@@ -5,7 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [error, setError] = useState();
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const [formState, dispatch] = useReducer((state, action) => {
     switch (action.type) {
@@ -26,6 +26,10 @@ export default function Signup() {
   }, {});
 
   const { username, email, password, confirmPassword } = formState;
+
+  // useEffect(() => {
+  //   console.log(formState);
+  // }, [formState]);
 
   const handleChange = (e) => {
     setError();
@@ -121,7 +125,6 @@ export default function Signup() {
         helperText={username?.error}
         style={{ marginBottom: "20px" }}
       />
-
       <TextField
         label="Email Address"
         name="email"
@@ -160,20 +163,21 @@ export default function Signup() {
         onClick={async () => {
           if (!validate()) return;
           try {
-            await axios.post("/users/register", {
+            console.log(formState);
+            await axios.post("/users/signup", {
               username: username.value,
               email: email.value,
               password: password.value,
             });
-            history.push("/login");
+            navigate("/login");
           } catch (err) {
             console.error(err);
-            setError("Unable to register, please try again");
+            alert("Unable to register. Please try again.");
             return;
           }
         }}
       >
-        Register
+        Sign Up
       </Button>
       <NavLink to="/login">Login!!!</NavLink>
     </Paper>

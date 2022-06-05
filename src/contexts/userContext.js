@@ -8,16 +8,10 @@ export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
-    const checkCookie = async () => {
-      try {
-        const result = await axios.get("/auth");
-        setUserData(result.data);
-      } catch (error) {
-        console.error(error);
-      }
-      setIsLoading(false);
-    };
-    checkCookie();
+    axios
+      .get("/auth")
+      .then((res) => setUserData(res.data))
+      .then(setIsLoading(false));
   }, []);
 
   if (isLoading) return null;

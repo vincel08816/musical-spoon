@@ -12,7 +12,7 @@ const expiresIn = 36000;
 // @access   Public
 
 router.post(
-  "/register",
+  "/signup",
   check("username", "username is required").notEmpty(),
   check("email", "Please include a valid email").isEmail(),
   check(
@@ -23,11 +23,12 @@ router.post(
     .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%*#?&]/),
   async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.sendStatus(400);
+    if (!errors.isEmpty()) return res.status(400).json({ error: errors });
 
-    const { username, email, password } = req.body;
-    const lowercaseEmail = email.toLowerCase();
     try {
+      const { username, email, password } = req.body;
+      const lowercaseEmail = req.body.email.toLowerCase().replace(" ", "");
+
       if (await User.findOne({ lowercaseEmail })) return res.sendStatus(400);
 
       const user = new User({ username, email, password, lowercaseEmail });
@@ -36,11 +37,12 @@ router.post(
       user.password = await bcrypt.hash(req.body.password, salt);
 
       await user.save();
-      const payload = { user: { id: user.id } };
-      jwt.sign(payload, secret, { expiresIn: 3600 }, (err, token) => {
+
+      const payload = { id: user.id, email: lowercaseEmail };
+      jwt.sign(payload, secret, { expiresIn }, (err, token) => {
         if (err) throw err;
         res.cookie("token", token, { httpOnly: true });
-        res.sendStatus(200);
+        res.json(payload);
       });
     } catch (error) {
       console.error(error);
@@ -48,27 +50,5 @@ router.post(
     }
   }
 );
-
-router.post("/login", async (req, res) => {
-  try {
-    const { password } = req.body;
-    const email = req.body.email.toLowerCase().replace(" ", "");
-    const user = User.findOne({ email });
-
-    if (!user) return res.sendStatus(400);
-    let isMatch = await bcrypt.compare(password, user.password);
-    if (isMatch) {
-      const jwtHelper = async (err, token) => {
-        if (err) throw err;
-        res.cookie("token", token, { httpOnly: true });
-      };
-      const payload = { id: user.id, name: user.username };
-      jwt.sign(payload, secret, { expiresIn }, jwtHelper);
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500);
-  }
-});
 
 module.exports = router;
