@@ -1,11 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-const Conversations = React.memo(() => {
+export default React.memo(() => {
   return <Container></Container>;
 });
-
-export default Conversations;
 
 const Container = styled.div`
   flex: 1;

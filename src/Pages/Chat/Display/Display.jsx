@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Chatbox from "./ChatBox";
 import Conversation from "./Conversation";
 import Header from "./Header";
 
@@ -7,6 +8,7 @@ export default function Content() {
     <Container>
       <Header />
       <Conversation />
+      <Chatbox />
     </Container>
   );
 }
