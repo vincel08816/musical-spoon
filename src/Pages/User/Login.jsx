@@ -46,7 +46,7 @@ export default function Login() {
       const result = await axios.post("/auth/login", { email, password });
       setUserData(result.data);
     } catch (error) {
-      alert(
+      setError(
         "Unable to login. Please make sure your email and password are correct then try again."
       );
       console.error(error);

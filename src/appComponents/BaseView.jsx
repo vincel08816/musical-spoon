@@ -1,4 +1,5 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import axios from "axios";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
@@ -6,7 +7,32 @@ import { UserContext } from "../contexts/userContext";
 const rightBoxStyle = { flexDirection: "row-reverse" };
 
 export default function BaseView({ children }) {
-  const { isLoggedIn } = useContext(UserContext);
+  const { isLoggedIn, setUserData, inChat } = useContext(UserContext);
+
+  const getButton = () => {
+    if (inChat)
+      return (
+        <Button
+          variant="contained"
+          sx={{ fontSize: "16px" }}
+          onClick={() => {
+            setUserData({});
+            axios.delete("/auth/logout");
+          }}
+        >
+          Logout
+        </Button>
+      );
+    return (
+      <Button variant="contained" sx={{ fontSize: "16px" }}>
+        {isLoggedIn ? (
+          <Link to="/">Open Chat</Link>
+        ) : (
+          <Link to="/login">Login</Link>
+        )}
+      </Button>
+    );
+  };
 
   return (
     <BaseStyle>
@@ -17,15 +43,7 @@ export default function BaseView({ children }) {
               <Link to="/">React Chat App</Link>
             </Button>
           </Typography>
-          <Box sx={{ rightBoxStyle }}>
-            <Button variant="contained" sx={{ fontSize: "16px" }}>
-              {isLoggedIn ? (
-                <Link to="/">Open Chat</Link>
-              ) : (
-                <Link to="/login">Login</Link>
-              )}
-            </Button>
-          </Box>
+          <Box sx={{ rightBoxStyle }}>{getButton()}</Box>
         </Toolbar>
       </AppBar>
       <main style={{ display: "flex", justifyContent: "center" }}>

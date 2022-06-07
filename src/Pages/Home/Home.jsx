@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { UserContext } from "../../contexts/userContext";
 
 export default function Home() {
-  // what the heck, why won't you work?
   const { isLoggedIn } = useContext(UserContext);
 
   return (

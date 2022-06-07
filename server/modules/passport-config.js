@@ -9,7 +9,7 @@ const options = {
 const callback = (payload, done) =>
   User.findById(payload.id)
     .then((user) => {
-      console.log(user);
+      // console.log(user);
       done(null, user ? { id: user.id, email: user.email } : false);
     })
     .catch((error) => console.error(error));

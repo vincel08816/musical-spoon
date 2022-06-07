@@ -17,7 +17,10 @@ router.get(
   async (req, res) =>
     await User.findById(req.user.id)
       .select("-password")
-      .then((user) => res.json(user))
+      .then((user) => {
+        console.log("something");
+        res.json(user);
+      })
       .catch((err) => console.error(err) && res.sendStatus(500))
 );
 
@@ -31,7 +34,7 @@ router.post(
   check("password", "Password is required").exists(),
   async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.sendStatus(400);
+    if (!errors.isEmpty()) return res.sendStatus(401);
 
     try {
       const { password } = req.body;
@@ -60,12 +63,18 @@ router.post(
 router.delete(
   "/logout",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.cookie("token", "none", {
-      expires: new Date(Date.now() + 5 * 1000),
-      httpOnly: true,
-    });
-    res.sendStatus(200);
+  async (req, res) => {
+    console.log("hello");
+    try {
+      res.cookie("token", "none", {
+        expires: new Date(Date.now() + 5 * 1000),
+        httpOnly: true,
+      });
+      res.sendStatus(200);
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
   }
 );
 
