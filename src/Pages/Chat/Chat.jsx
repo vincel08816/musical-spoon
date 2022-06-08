@@ -1,19 +1,26 @@
 import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../../contexts/userContext";
+import { ChatProvider } from "./ChatContext";
 import Content from "./Display";
 import Sidebar from "./Sidebar/Sidebar";
 
 export default function Chat() {
   const { isLoggedIn } = useContext(UserContext);
 
+  // console.log("isLoggedIn", isLoggedIn);
+  if (!isLoggedIn) <Navigate to="/" />;
+
   return (
-    <Container>
-      <ChatContainer>
-        <Sidebar />
-        <Content />
-      </ChatContainer>
-    </Container>
+    <ChatProvider>
+      <Container>
+        <ChatContainer>
+          <Sidebar />
+          <Content />
+        </ChatContainer>
+      </Container>
+    </ChatProvider>
   );
 }
 

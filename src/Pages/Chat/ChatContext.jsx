@@ -1,34 +1,46 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
-export const ChatContext = createContext();
+import { createContext, useState } from "react";
+import useConversation from "./Hooks/useConversation";
+import useSocket from "./Hooks/useSocket";
 
 /*
-  chats: type array
-  currentChat: type string
-  get chats to get chats
-*/
+ **  chats: type array
+ **  currentChat: type string
+ **  get chats to get chats
+ */
+
+export const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
-  const [chats, setChats] = useState({});
-  const [currentChatId, setCurrentChatId] = useState();
+  const [selectedChatId, setSelectedChatId] = useState();
+  const [pendingData, setPendingData] = useState();
+
+  let { onlineUsers, socket } = useSocket(setPendingData);
+  let { messages, setMessages } = useConversation({
+    pendingData,
+    setPendingData,
+    selectedChatId,
+    setSelectedChatId,
+  });
 
   const getChats = () => {
     axios
       .get("/")
-      .then((res) => setChats(res.data))
+      .then((res) => messages(res.data))
       .catch((err) => console.log(err));
   };
 
-  const selectChat = (id) => setCurrentChatId(id);
+  const selectChat = (id) => setSelectedChatId(id);
 
   // useEffect(getChats, []);
 
   return (
     <ChatContext.Provider
       value={{
-        chats,
-        setChats,
+        messages,
+        setMessages,
         selectChat,
+        onlineUsers,
       }}
     >
       {children}

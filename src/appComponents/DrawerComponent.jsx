@@ -38,20 +38,7 @@ export default function DrawerComponent() {
       <Typography variant="h6" sx={{ p: 2, pb: 0, fontWeight: 600 }}>
         Shop
       </Typography>
-      <List>
-        {/* {Sections.map(({ text, icon }, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              <img
-                src={icon}
-                alt={text}
-                style={{ width: "40px", padding: "3px 15px 3px 3px" }}
-              />
-            </ListItemIcon>
-            <ListItemText primary={text} sx={{ pl: 1 }} />
-          </ListItem>
-        ))} */}
-      </List>
+
       <Divider sx={{ mb: 2 }} />
 
       <Typography variant="h6" sx={{ fontWeight: 600, p: 1, pl: 2 }}>

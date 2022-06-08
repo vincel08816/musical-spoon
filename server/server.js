@@ -21,7 +21,7 @@ const getUser = (userId) => users.find((user) => user.userId === userId);
 
 io.on("connection", (socket) => {
   // console.log("socket:", socket);
-  // console.log("a user has connected.");
+  console.log("a user has connected.");
 
   socket.on("addUser", (userId) => {
     // console.log("addUser");

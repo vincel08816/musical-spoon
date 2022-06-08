@@ -17,10 +17,7 @@ router.get(
   async (req, res) =>
     await User.findById(req.user.id)
       .select("-password")
-      .then((user) => {
-        console.log("something");
-        res.json(user);
-      })
+      .then((user) => res.json(user))
       .catch((err) => console.error(err) && res.sendStatus(500))
 );
 
