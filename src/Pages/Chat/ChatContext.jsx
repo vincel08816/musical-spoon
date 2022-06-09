@@ -15,8 +15,8 @@ export const ChatProvider = ({ children }) => {
   const [selectedChatId, setSelectedChatId] = useState();
   const [pendingData, setPendingData] = useState();
 
-  let { onlineUsers, socket } = useSocket(setPendingData);
-  let { messages, setMessages } = useConversation({
+  const { onlineUsers } = useSocket(setPendingData);
+  const { messages, setMessages } = useConversation({
     pendingData,
     setPendingData,
     selectedChatId,

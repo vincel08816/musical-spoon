@@ -9,6 +9,7 @@ module.exports = model(
       email: { type: String, unique: true, required: true },
       lowercaseEmail: { type: String, unique: true, required: true },
       picture: { type: String },
+      friends: { type: Array, required: true },
     },
     { timestamps: true }
   )

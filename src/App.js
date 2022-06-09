@@ -39,6 +39,7 @@ function UserRoutes() {
         { path: "/login", exact: true, element: <User.Login /> },
         { path: "/signup", exact: true, element: <User.SignUp /> },
       ].map((props, index) => parseRoute(isLoggedIn, props, index + "uR"))}
+
       {[{ path: "/c/:id", exact: true, element: <Chat /> }].map(
         (props, index) => parseRoute(!isLoggedIn, props, index + "aR")
       )}

@@ -9,7 +9,6 @@ import Sidebar from "./Sidebar/Sidebar";
 export default function Chat() {
   const { isLoggedIn } = useContext(UserContext);
 
-  // console.log("isLoggedIn", isLoggedIn);
   if (!isLoggedIn) <Navigate to="/" />;
 
   return (
