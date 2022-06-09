@@ -1,46 +1,35 @@
 import { Button, Divider, Paper, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Navigate, NavLink } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { UserContext } from "../../contexts/userContext";
 
 const emptyEmailError = "Email cannot be empty.";
-const emptyPasswordError = "Password cannot be empty.";
 
-export default function Login() {
+export default function AddFriend() {
+  const { isLoading, isLoggedIn } = useContext(UserContext);
+  const [error, setError] = useState();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState();
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState();
-  const [error, setError] = useState();
-  const { isLoading, isLoggedIn, setUserData } = useContext(UserContext);
 
   useEffect(() => {
     email && setEmailError(email.length > 0 ? "" : emptyEmailError);
-    password && setPasswordError(password.length > 0 ? "" : emptyPasswordError);
-  }, [email, password]);
+  }, [email]);
 
-  const login = async (e) => {
+  const add = async (e) => {
     e.preventDefault();
-    if (!email && !password) {
-      setPasswordError(emptyPasswordError);
-      return setEmailError(emptyEmailError);
-    }
     if (!email) return setEmailError(emptyEmailError);
-    if (!password) return setPasswordError(emptyPasswordError);
 
     try {
-      const result = await axios.post("/auth/login", { email, password });
-      setUserData(result.data);
+      const result = await axios.post("/users/friend", { email });
+      alert(result?.data);
     } catch (error) {
-      setError(
-        "Unable to login. Please make sure your email and password are correct then try again."
-      );
       console.error(error);
+      setError("Unable to add friend.");
     }
   };
 
-  if (!isLoading && isLoggedIn) return <Navigate to="/" />;
+  if (!isLoading && !isLoggedIn) return <Navigate to="/" />;
 
   return (
     <Paper
@@ -48,21 +37,21 @@ export default function Login() {
         display: "flex",
         flexDirection: "column",
         width: 600,
-        height: 400,
+        height: 300,
         p: 3,
         m: 10,
         boxShadow: 3,
       }}
     >
       <Typography variant="h4" component="div" sx={{ p: 2 }}>
-        Login
+        Add Friend
       </Typography>
       <Divider sx={{ mb: 3 }} />
       {error && (
         <Typography
           color="error"
           variant="body2"
-          sx={{ margin: "-10px 0 30px 10px" }}
+          sx={{ margin: "-10px 0 10px 10px" }}
         >
           {error}
         </Typography>
@@ -75,29 +64,18 @@ export default function Login() {
         value={email}
         error={Boolean(emailError)}
         helperText={emailError}
-      />
-      <TextField
-        label="Password"
-        name="password"
-        onChange={(e) => setPassword(e.target.value)}
-        value={password}
-        error={Boolean(passwordError)}
-        helperText={passwordError}
-        type="password"
         style={{ margin: "20px 0" }}
       />
       <Button
         variant="contained"
         sx={{
           padding: "10px",
-          marginBottom: "25px",
           fontSize: "16px",
         }}
-        onClick={login}
+        onClick={add}
       >
-        Login
+        Add Friend
       </Button>
-      <NavLink to="/signup">Register</NavLink>
     </Paper>
   );
 }

@@ -1,9 +1,11 @@
 import { Button, Divider, Paper, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
+import { UserContext } from "../../contexts/userContext";
 
 export default function Signup() {
+  const { isLoggedIn, isLoading } = React.useContext(UserContext);
   const [error, setError] = useState();
   const navigate = useNavigate();
 
@@ -27,17 +29,9 @@ export default function Signup() {
 
   const { username, email, password, confirmPassword } = formState;
 
-  // useEffect(() => {
-  //   console.log(formState);
-  // }, [formState]);
-
   const handleChange = (e) => {
     setError();
-    dispatch({
-      type: "text",
-      field: e.target.name,
-      value: e.target.value,
-    });
+    dispatch({ type: "text", field: e.target.name, value: e.target.value });
   };
 
   const validate = useCallback(() => {
@@ -91,6 +85,8 @@ export default function Signup() {
   useEffect(() => {
     validate();
   }, [formState, validate]);
+
+  if (!isLoading && isLoggedIn) return <Navigate to="/" />;
 
   return (
     <Paper

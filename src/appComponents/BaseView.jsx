@@ -26,7 +26,7 @@ export default function BaseView({ children }) {
     return (
       <Button variant="contained" sx={{ fontSize: "16px" }}>
         {isLoggedIn ? (
-          <Link to="/">Open Chat</Link>
+          <Link to="/c/">Open Chat</Link>
         ) : (
           <Link to="/login">Login</Link>
         )}

@@ -1,57 +1,39 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useContext } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import BaseView from "./appComponents/BaseView";
-import { UserContext, UserProvider } from "./contexts/userContext";
+import { UserProvider } from "./contexts/userContext";
+import AddFriend from "./Pages/AddFriend";
 import Chat from "./Pages/Chat";
 import Home from "./Pages/Home/";
 import * as User from "./Pages/User";
 
-const theme = createTheme({});
+// {!} TODO: Add Not found page if I have time...
 
-const NotFound = () => <div>404 Not Found</div>;
+const theme = createTheme({});
 
 const Wrapper = ({ children }) => (
   <ThemeProvider theme={theme}>
     <UserProvider>
       <BrowserRouter>
-        <BaseView>{children}</BaseView>
+        <BaseView>
+          <Routes>{children}</Routes>
+        </BaseView>
       </BrowserRouter>
     </UserProvider>
   </ThemeProvider>
 );
 
-const parseRoute = (filter, props, key) =>
-  filter ? (
-    <Route key={key + "N"} element={<Navigate to="/" />} {...props} />
-  ) : (
-    <Route key={key + "R"} {...props} />
-  );
-
-function UserRoutes() {
-  const { isLoggedIn } = useContext(UserContext);
-
-  return (
-    <Routes>
-      <Route path="/" exact element={<Home />} />
-      {[
-        { path: "/login", exact: true, element: <User.Login /> },
-        { path: "/signup", exact: true, element: <User.SignUp /> },
-      ].map((props, index) => parseRoute(isLoggedIn, props, index + "uR"))}
-
-      {[{ path: "/c/:id", exact: true, element: <Chat /> }].map(
-        (props, index) => parseRoute(!isLoggedIn, props, index + "aR")
-      )}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-}
-
 export default function App() {
   return (
     <Wrapper>
-      <UserRoutes />
+      <Route path="/" exact element={<Home />} />
+      <Route path="/login" exact element={<User.Login />} />
+      <Route path="/signup" exact element={<User.SignUp />} />
+      <Route path="/add-friend" exact element={<AddFriend />} />
+      <Route path="/c" exact element={<Chat />} />
+      <Route path="/c/:id" exact element={<Chat />} />
+      <Route path="*" element={<div>404 Not Found</div>} />
     </Wrapper>
   );
 }

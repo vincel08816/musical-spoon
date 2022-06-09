@@ -7,9 +7,9 @@ import Content from "./Display";
 import Sidebar from "./Sidebar/Sidebar";
 
 export default function Chat() {
-  const { isLoggedIn } = useContext(UserContext);
+  const { isLoggedIn, isLoading } = useContext(UserContext);
 
-  if (!isLoggedIn) <Navigate to="/" />;
+  if (!isLoading && !isLoggedIn) return <Navigate to="/" />;
 
   return (
     <ChatProvider>

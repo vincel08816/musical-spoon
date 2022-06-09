@@ -8,11 +8,25 @@ export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState({});
   const [inChat, setInChat] = useState(false);
 
-  useEffect(() => {
+  const refreshUser = async () =>
     axios
       .get("/auth")
       .then((res) => setUserData(res.data))
-      .then(setIsLoading(false));
+      .catch((err) => console.error(err));
+
+  const checkCookie = async () => {
+    try {
+      const result = await axios.get("/auth");
+      setUserData(result.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    checkCookie().then(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -41,6 +55,8 @@ export const UserProvider = ({ children }) => {
         setUserData,
         isLoggedIn: !!userData?.email,
         inChat,
+        isLoading,
+        refreshUser,
       }}
     >
       {children}
