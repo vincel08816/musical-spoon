@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
+const passport = require("passport");
 
 const expiresIn = 36000;
 
@@ -44,6 +45,44 @@ router.post(
         res.cookie("token", token, { httpOnly: true });
         res.json(payload);
       });
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+  }
+);
+
+// @route    POST /users/friend
+// @desc     Add/Remove Friend
+// @access   Private
+
+router.post(
+  "/friend",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      let user = await User.findById(req.user.id);
+      let lowercaseEmail = req.body.email.toLowerCase().replace(" ", "");
+      if (!user || !req.body?.email) return res.sendStatus(401);
+
+      let friend = await User.findOne({ lowercaseEmail });
+      if (!friend)
+        return res.status(400).send({ error: "User does not exist." });
+
+      // {!} refactor this? I can just use the id to remove later.
+      const alreadyAdded = user.friends.some(
+        (id) => id.toString() === friend._id.toString()
+      );
+
+      alreadyAdded
+        ? (user.friends = user.friends.filter(
+            (id) => id.toString() !== friend._id.toString()
+          ))
+        : user.friends.push(friend._id);
+
+      await user.save();
+
+      res.json(`User ${alreadyAdded ? "removed from" : "added to"} list`);
     } catch (error) {
       console.error(error);
       res.sendStatus(500);

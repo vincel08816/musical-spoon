@@ -6,15 +6,13 @@ const server = require("http").createServer(app);
 
 const io = require("socket.io")(server);
 
-// let users = [];
 const users = new Map();
 
 io.on("connection", (socket) => {
-  // console.log("socket:", socket);
   console.log("a user has connected.");
 
   socket.on("addUser", (userId) => {
-    // console.log("addUser");
+    console.log("addUser");
     users.set(userId, socket.id);
     users.set(socket.id, userId);
 
@@ -22,15 +20,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMessage", ({ senderId, receiverId, conversationId, text }) => {
-    const user = users.get(receiverId);
     console.log("💌 sendMessage:", text);
-    if (user) {
-      io.to(user.socketId).emit("getMessage", {
-        senderId,
-        text,
-        conversationId,
-      });
-    }
+
+    const user = users.get(receiverId);
+    let payload = { senderId, text, conversationId };
+    // {!} do not send message back if sending to self.
+    if (user) io.to(user.socketId).emit("getMessage", payload);
   });
 
   socket.on("disconnect", () => {

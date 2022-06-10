@@ -32,14 +32,11 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const checkPath = () => {
       const pathname = window.location.pathname;
-      console.log(userData?.email);
-
-      if (pathname[0] && pathname[1] === "c") return true;
-      if (pathname.length < 3) return false;
+      if (pathname.length < 3) return !!(pathname[0] && pathname[1] === "c");
       for (let i = 0; i < 3; i++) if ("/c/"[i] !== pathname[i]) return false;
       return true;
     };
-    setInChat(userData?.email && checkPath());
+    setInChat(!!(userData?.email && checkPath()));
   }, [userData]);
 
   useEffect(() => {

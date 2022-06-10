@@ -41,6 +41,7 @@ const path = require("path");
 [
   ["/users", require("../routes/user")],
   ["/auth", require("../routes/auth")],
+  ["/chat", require("../routes/chat")],
 ].forEach(([name, router]) => app.use(name, router));
 
 require("./passport-config")(passport);

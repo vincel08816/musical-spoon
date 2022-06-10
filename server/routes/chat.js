@@ -1,44 +1,92 @@
 const router = require("express").Router();
 const User = require("../models/User");
+const { Conversation, Message } = require("../models/Chat");
 const { check, validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const secret = process.env.SECRET;
+const passport = require("passport");
 
-// @route    GET /
-// @desc     Get most recent chats by message schema
+// {!!!} Protect these routes with passport after testing
+
+// {!} 6/10 - Test this route
+
+// @route    GET /conversations
+// @desc     Get all private conversations by a single user
 // @access   Private
 
-router.get("/", async (req, res) => {
-  try {
-    res.sendStatus(200);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-});
+router.get(
+  "/conversations",
+  // passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      // {?} query mongo by conversations with members including the current user
 
-// @route    POST /private
-// @desc     Send Messages based on Schema group message ID
+      res.sendStatus(200);
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+  }
+);
+
+// {!} 6/10 - Test this route
+
+// @route    GET /messages
+// @desc     Get all messages for a single conversation
 // @access   Private
 
-router.post("/private", async (req, res) => {
-  try {
-    res.sendStatus(200);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-});
+router.get(
+  "/messages",
+  // passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const { conversationId } = req.body;
+      if (!conversationId) return res.sendStatus(400);
 
-// @route    POST /group
-// @desc     Sends a message to the group
+      const messages = await Message.find({ conversationId });
+
+      res.json(messages);
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+  }
+);
+
+// {!} 6/10 - Test this route
+// {!} 6/10 - Update Route to include group messages
+
+async function makeAndGetId({ name, isGroup, members }) {
+  try {
+    let newConversation = new Conversation({ name, members, isGroup });
+    await newConversation.save();
+    return newConversation._id;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// @route    POST /message
+// @desc     Send Messages between user or group
 // @access   Private
 
-router.post("/group", async (req, res) => {
-  try {
-    res.sendStatus(200);
-  } catch (error) {
-    res.sendStatus(500);
+router.post(
+  "/message",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      if (!req.user?._id || !req.body?.members) return res.sendStatus(400);
+      let conversationId =
+        req.body.conversationId || (await makeAndGetId(req.body));
+      await new Message({
+        senderId: req.user._id,
+        conversationId,
+        text: req.body.text,
+      }).save();
+      res.sendStatus(200);
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
   }
-});
+);
 
 module.exports = router;

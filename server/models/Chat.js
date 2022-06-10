@@ -1,14 +1,26 @@
 const { Schema, model } = require("mongoose");
 
-module.exports = model(
-  "chat",
-  new Schema(
-    {
-      senderId: { required: true, type: String },
-      recieverId: { required: true, type: String },
-      messageType: { required: true, type: String },
-      message: { required: true, type: String },
-    },
-    { timestamps: true }
-  )
-);
+module.exports = {
+  Conversation: model(
+    "conversation",
+    new Schema(
+      {
+        name: { required: true, type: String, default: "Untitled" },
+        isGroup: { required: true, type: Boolean, default: false },
+        members: [],
+      },
+      { timestamps: true }
+    )
+  ),
+  Message: model(
+    "message",
+    new Schema(
+      {
+        senderId: { required: true, type: String },
+        conversationId: { required: true, type: String },
+        text: { required: true, type: String },
+      },
+      { timestamps: true }
+    )
+  ),
+};
