@@ -54,9 +54,15 @@ router.get(
 // {!} 6/10 - Test this route
 // {!} 6/10 - Update Route to include group messages
 
-async function makeAndGetId({ name, isGroup, members }) {
+async function makeAndGetId(user, { name, isGroup, members }) {
   try {
     let newConversation = new Conversation({ name, members, isGroup });
+
+    // {!} figure out how to query by: !isGroup + members[user, reciever] + etc
+
+    // if (!isGroup && await Conversation.findOne({isGroup: false, members),  })) {
+    //   throw new Error("Conversation already exists");
+    // }
     await newConversation.save();
     return newConversation._id;
   } catch (error) {
@@ -75,7 +81,7 @@ router.post(
     try {
       if (!req.user?._id || !req.body?.members) return res.sendStatus(400);
       let conversationId =
-        req.body.conversationId || (await makeAndGetId(req.body));
+        req.body.conversationId || (await makeAndGetId(req.user, req.body));
       await new Message({
         senderId: req.user._id,
         conversationId,

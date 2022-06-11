@@ -5,6 +5,8 @@ import { UserContext } from "../../contexts/userContext";
 export default function AddFriend() {
   const { isLoading, inChat, userData } = useContext(UserContext);
 
+  // if (window.location.hostname !== "localhost") return null;
+
   return (
     <Paper
       sx={{
