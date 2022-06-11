@@ -40,7 +40,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "node server/server.js",
+    "start": "concurrently \"yarn run server\" \"yarn run client\"",
     "xclient": "cross-env-shell NODE_OPTIONS=--max_old_space_size=4096 \"react-scripts start\"",
     "client": "react-scripts start",
     "server": "nodemon --watch server server/server.js",
