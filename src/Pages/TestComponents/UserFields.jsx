@@ -2,10 +2,8 @@ import { Divider, Paper, Typography } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "../../contexts/userContext";
 
-const emptyEmailError = "Email cannot be empty.";
-
 export default function AddFriend() {
-  const { userData } = useContext(UserContext);
+  const { isLoading, inChat, userData } = useContext(UserContext);
 
   return (
     <Paper
@@ -23,11 +21,14 @@ export default function AddFriend() {
         User Data
       </Typography>
       <Divider sx={{ mb: 2 }} />
-      <Typography variant="body1" component="div" sx={{ p: 1 }}>
-        <div>Username : {userData.username}</div>
-        <div>User ID : {userData._id}</div>
-        <div>Email : {userData.email}</div>
-      </Typography>
+      {!isLoading && (
+        <Typography variant="body1" component="div" sx={{ p: 1 }}>
+          <div>inChat: {inChat.toString()} </div>
+          <div>Username : {userData.username}</div>
+          <div>User ID : {userData.id || userData._id}</div>
+          <div>Email : {userData.email}</div>
+        </Typography>
+      )}
     </Paper>
   );
 }

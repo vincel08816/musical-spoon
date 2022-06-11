@@ -39,7 +39,7 @@ router.post(
 
       await user.save();
 
-      const payload = { id: user.id, email: lowercaseEmail };
+      const payload = { id: user._id, email: lowercaseEmail, username };
       jwt.sign(payload, secret, { expiresIn }, (err, token) => {
         if (err) throw err;
         res.cookie("token", token, { httpOnly: true });

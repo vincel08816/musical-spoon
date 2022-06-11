@@ -6,6 +6,7 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState({});
+  // {!} the inChat does not seem to update after logging out of the chat server
   const [inChat, setInChat] = useState(false);
 
   const refreshUser = async () =>
@@ -17,6 +18,7 @@ export const UserProvider = ({ children }) => {
   const checkCookie = async () => {
     try {
       const result = await axios.get("/auth");
+      console.log(result.data)
       setUserData(result.data);
     } catch (error) {
       console.error(error);
@@ -37,7 +39,7 @@ export const UserProvider = ({ children }) => {
       return true;
     };
     setInChat(!!(userData?.email && checkPath()));
-  }, [userData]);
+  }, [isLoading, userData]);
 
   useEffect(() => {
     console.log(userData);

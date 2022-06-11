@@ -7,10 +7,11 @@ import { UserContext } from "../contexts/userContext";
 const rightBoxStyle = { flexDirection: "row-reverse" };
 
 export default function BaseView({ children }) {
-  const { isLoggedIn, setUserData, inChat } = useContext(UserContext);
+  const { isLoading, isLoggedIn, setUserData, inChat } =
+    useContext(UserContext);
 
   const getButton = () => {
-    if (inChat)
+    if (!isLoading && inChat)
       return (
         <Button
           variant="contained"

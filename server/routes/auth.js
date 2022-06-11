@@ -40,7 +40,7 @@ router.post(
       if (!user || !(await bcrypt.compare(password, user.password)))
         return res.sendStatus(401);
 
-      const payload = { id: user.id, email };
+      const payload = { id: user.id, email, username: user.username };
       jwt.sign(payload, secret, { expiresIn: 36000 }, (err, token) => {
         if (err) throw err;
         res.cookie("token", token, { httpOnly: true });
@@ -61,7 +61,6 @@ router.delete(
   "/logout",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    console.log("hello");
     try {
       res.cookie("token", "none", {
         expires: new Date(Date.now() + 5 * 1000),
